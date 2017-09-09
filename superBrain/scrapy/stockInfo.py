@@ -4,7 +4,7 @@
 from bs4 import BeautifulSoup
 import urllib
 import urllib2
-import cookielib
+import xlrd
 
 
 class StockInfo:
@@ -13,9 +13,9 @@ class StockInfo:
 
     @staticmethod
     def collection():
-        cookie = cookielib.CookieJar()
-        handler = urllib2.HTTPCookieProcessor(cookie)
-        opener = urllib2.build_opener(handler)
+        # cookie = cookielib.CookieJar()
+        # handler = urllib2.HTTPCookieProcessor(cookie)
+        # opener = urllib2.build_opener(handler)
 
         # response = opener.open("http://www.sse.com.cn/assortment/stock/list/share/")
         # #获取cookie值
@@ -28,7 +28,7 @@ class StockInfo:
         #     tag = tags[0]
         #     print tag.attrs["value"]
 
-        #抓取股票列表
+        # #抓取股票列表
         headers = {
             "Accept": "*/*",
             "Accept-Encoding": "gzip, deflate, sdch",
@@ -38,27 +38,55 @@ class StockInfo:
             "Referer": "http://www.sse.com.cn/market/othersdata/margin/sum/",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
         }
+        #
+        # datas = {
+        #     "jsonCallBack": "jsonpCallback29041",
+        #     "isPagination": True,
+        #     "stockCode": "",
+        #     "csrcCode": "",
+        #     "areaName": "",
+        #     "stockType": 1,
+        #     "pageHelp.cacheSize": 1,
+        #     "pageHelp.beginPage": 1,
+        #     "pageHelp.pageSize": 25,
+        #     "pageHelp.pageNo": 1,
+        # }
+        #
+        # url = "http://query.sse.com.cn/security/stock/getStockListData2.do?" + urllib.urlencode(datas)
+        #
+        # request = urllib2.Request(url, None, headers)
+        # response = opener.open(request)
+        # str = response.read().decode('utf-8')
 
         datas = {
-            "jsonCallBack": "jsonpCallback29041",
-            "isPagination": True,
-            "stockCode": "",
             "csrcCode": "",
+            "stockCode": "",
             "areaName": "",
-            "stockType": 1,
-            "pageHelp.cacheSize": 1,
-            "pageHelp.beginPage": 1,
-            "pageHelp.pageSize": 25,
-            "pageHelp.pageNo": 1,
+            "stockType": 1
         }
+        url = "http://query.sse.com.cn/security/stock/downloadStockListFile.do"
+        full_url = url + "?" + urllib.urlencode(datas)
 
-        url = "http://query.sse.com.cn/security/stock/getStockListData2.do?" + urllib.urlencode(datas)
+        request = urllib2.Request(full_url, headers = headers)
+        response = urllib2.urlopen(request)
 
-        request = urllib2.Request(url, None, headers)
-        response = opener.open(request)
-        str = response.read().decode('utf-8')
+        file_path = u"D://A股.xls"
+        f = open(file_path, 'wb')
+        block_size = 8192
+        while True:
+            fbuffer = response.read(block_size)
+            if not fbuffer:
+                break
 
-        print str
+            f.write(fbuffer)
+
+        f.close()
+
+        xls = xlrd.open_workbook(file_path)
+        table = xls.sheet_by_index(0)
+        row = table.row(0)
+        for cell in row:
+            print cell.value
 
 
 if __name__ == '__main__':
