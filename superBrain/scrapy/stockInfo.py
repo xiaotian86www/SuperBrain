@@ -70,7 +70,7 @@ class StockInfo:
         request = urllib2.Request(full_url, headers = headers)
         response = urllib2.urlopen(request)
 
-        file_path = u"D://A股.xls"
+        file_path = u"C://Users//xiaot//Documents//A股.xls"
         f = open(file_path, 'wb')
         block_size = 8192
         while True:
