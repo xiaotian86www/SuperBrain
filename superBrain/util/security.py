@@ -106,6 +106,6 @@ def _trans_balance(balance_str):
 
 if __name__ == "__main__":
     data = get("600570")
-    file_path = u"C://Users//xiaot//Documents//融资融券.csv"
+    file_path = u"C://temp//融资融券.csv"
 
     data.to_csv(file_path, encoding="gb2312")

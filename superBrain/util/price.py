@@ -61,6 +61,6 @@ def get(report_code, start, end):
 
 if __name__ == "__main__":
     data = get("600570", "20130916", "20170909")
-    file_path = u"C://Users//xiaot//Documents//行情.csv"
+    file_path = u"C://temp//行情.csv"
 
     data.to_csv(file_path, encoding="gb2312")
